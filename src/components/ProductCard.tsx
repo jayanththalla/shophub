@@ -42,9 +42,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               Rating: {product.rating.rate}/5 ({product.rating.count})
             </span>
           </div>
-          <button className="text-sm text-primary font-medium hover:underline">
+          <span className="text-sm text-primary font-medium hover:underline">
             View Details
-          </button>
+          </span>
         </div>
       </div>
     </Link>
