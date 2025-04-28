@@ -2,8 +2,6 @@
 
 A modern, responsive e-commerce application built with React, TypeScript, and Tailwind CSS. This project demonstrates best practices in React development, including component architecture, state management, and responsive design.
 
-![ShopHub Screenshot](![image](https://github.com/user-attachments/assets/07c9bd4b-8757-4aa4-be1d-936ef1aaeea9)
-)
 
 ## Features
 
