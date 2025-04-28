@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { getProducts, getCategories } from '../services/api';
 import { Product } from '../types/product';
@@ -95,19 +94,42 @@ const ProductListing: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 animate-fade-in">
-      <h1 className="text-3xl font-bold mb-2">All Products</h1>
-      <p className="text-gray-600 mb-8">Discover our quality collection</p>
-      
-      <ProductFilters 
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onCategoryChange={handleCategoryChange}
-        sortOrder={sortOrder}
-        onSortChange={handleSortChange}
-      />
-      
-      <ProductGrid products={filteredProducts} isLoading={isLoading} />
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Discover Our Collection
+          </h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Explore our curated selection of premium products, carefully chosen to enhance your lifestyle
+          </p>
+        </div>
+        
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+          <ProductFilters 
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+            sortOrder={sortOrder}
+            onSortChange={handleSortChange}
+          />
+        </div>
+        
+        <div className="relative">
+          <ProductGrid products={filteredProducts} isLoading={isLoading} />
+          
+          {!isLoading && filteredProducts.length === 0 && (
+            <div className="text-center py-12">
+              <div className="bg-gray-50 rounded-lg p-8 max-w-md mx-auto">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">No Products Found</h3>
+                <p className="text-gray-600">
+                  Try adjusting your filters or search criteria to find what you're looking for.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
