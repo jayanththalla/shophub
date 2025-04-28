@@ -1,20 +1,32 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getProduct } from '../services/api';
 import { Product } from '../types/product';
 import ErrorDisplay from '../components/ErrorDisplay';
 import { ChevronLeft } from 'lucide-react';
+import { toast } from '../components/ui/sonner';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!id || isNaN(parseInt(id))) {
-      setError('Invalid product ID');
+    // Check if ID exists and is a valid number
+    if (!id) {
+      setError('Product ID is missing');
+      setIsLoading(false);
+      return;
+    }
+
+    const productId = parseInt(id);
+    
+    // Check if the parsed ID is a valid number
+    if (isNaN(productId) || productId <= 0) {
+      setError('Invalid product ID format');
       setIsLoading(false);
       return;
     }
@@ -24,8 +36,12 @@ const ProductDetail: React.FC = () => {
       setError(null);
       
       try {
-        const data = await getProduct(parseInt(id));
-        setProduct(data);
+        const data = await getProduct(productId);
+        if (!data) {
+          setError('Product not found');
+        } else {
+          setProduct(data);
+        }
       } catch (err) {
         setError('Failed to load product details. Please try again later.');
         console.error(err);
@@ -38,14 +54,32 @@ const ProductDetail: React.FC = () => {
   }, [id]);
 
   const handleRetry = () => {
-    if (!id || isNaN(parseInt(id))) return;
+    if (!id) {
+      // If there's no ID at all, go back to product listing
+      navigate('/');
+      return;
+    }
+    
+    const productId = parseInt(id);
+    if (isNaN(productId) || productId <= 0) {
+      // If ID is invalid, go back to product listing
+      navigate('/');
+      toast('Redirected to product listing', {
+        description: 'The product ID was invalid'
+      });
+      return;
+    }
     
     setIsLoading(true);
     setError(null);
     
-    getProduct(parseInt(id))
+    getProduct(productId)
       .then(data => {
-        setProduct(data);
+        if (!data) {
+          setError('Product not found');
+        } else {
+          setProduct(data);
+        }
       })
       .catch(err => {
         setError('Failed to load product details. Please try again later.');
@@ -84,7 +118,7 @@ const ProductDetail: React.FC = () => {
   }
 
   if (!product) {
-    return <ErrorDisplay message="Product not found" />;
+    return <ErrorDisplay message="Product not found" onRetry={handleRetry} />;
   }
 
   return (
